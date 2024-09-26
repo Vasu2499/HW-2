@@ -1,0 +1,147 @@
+---
+title: "R-Snippets"
+output: html_document
+date: "2024-09-23"
+---
+
+```{r}
+set.seed(2)
+sample(1:5, 5)
+sample(1:5, 5)
+sample(1:5, 5)
+```
+
+```{r}
+set.seed(2)
+sample(1:6, 6)
+
+sample(1:6, 6)
+sample(1:6, 6)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Types of dice roll
+
+```{r}
+
+# Simulate rolling a six-sided die once
+roll <- sample(1:6, 1)
+print(roll)
+
+# Simulate rolling a six-sided die 10 times
+rolls <- sample(1:6, 10, replace = TRUE)
+print(rolls)
+
+```
+
+### Using the `runif()` Function
+
+```{r}
+
+# Simulate rolling a six-sided die once
+roll <- floor(runif(1, min = 1, max = 7))
+print(roll)
+
+# Simulate rolling a six-sided die 10 times
+rolls <- floor(runif(10, min = 1, max = 7))
+print(rolls)
+```
+
+### Using the **`replicate()`** Function
+
+```{r}
+# Simulate rolling a six-sided die 10 times
+rolls <- replicate(10, sample(1:6, 1))
+print(rolls)
+```
+
+### Custom Function/Vectorized Function
+
+```{r}
+# Define a custom function to roll a die
+roll_die <- function(n) {
+  sample(1:6, n, replace = TRUE)
+}
+
+# Simulate rolling a six-sided die 10 times
+rolls <- roll_die(10)
+print(rolls)
+```
+
+```{r}
+# Define probabilities for each face of the die
+probabilities <- c(0.1, 0.2, 0.3, 0.1, 0.2, 0.1)
+
+# Simulate rolling a biased six-sided die once
+roll <- sample(1:6, 1, prob = probabilities)
+print(roll)
+
+# Simulate rolling a biased six-sided die 10 times
+rolls <- sample(1:6, 10, replace = TRUE, prob = probabilities)
+print(rolls)
+
+
+```
+
+```{r}
+# Install the purrr package if not already installed
+# if (!require(purrr)) install.packages("purrr")
+
+# Load the purrr package
+library(purrr)
+
+# Simulate rolling a six-sided die 10 times
+rolls <- map_int(1:10, ~ sample(1:6, 1))
+print(rolls)
+```
+
+```{r}
+# Simulate rolling a six-sided die once
+roll <- ceiling(runif(1, min = 0, max = 6))
+print(roll)
+
+# Simulate rolling a six-sided die 10 times
+rolls <- ceiling(runif(10, min = 0, max = 6))
+print(rolls)
+
+```
+
+```{r}
+# Simulate rolling a six-sided die once
+roll <- rbinom(1, 5, 0.5) + 1
+print(roll)
+
+# Simulate rolling a six-sided die 10 times
+rolls <- rbinom(10, 5, 0.5) + 1
+print(rolls)
+
+```
+
+```{r}
+# Simulate rolling a six-sided die once
+roll <- round(rnorm(1, mean = 3.5, sd = 1.7))
+roll <- max(min(roll, 6), 1)  # Ensure the result is between 1 and 6
+print(roll)
+
+# Simulate rolling a six-sided die 10 times
+rolls <- round(rnorm(10, mean = 3.5, sd = 1.7))
+rolls <- pmax(pmin(rolls, 6), 1)  # Ensure the results are between 1 and 6
+print(rolls)
+
+```
+
+```{r}
+# Install the TeachingDemos package if not already installed
+if (!require(TeachingDemos)) install.packages("TeachingDemos")
+
+# Load the TeachingDemos package
+library(TeachingDemos)
+
+# Simulate rolling four six-sided dice 10 times
+rolls <- dice(10, 4)
+print(rolls)
+
+```

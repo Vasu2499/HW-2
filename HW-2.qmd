@@ -1,0 +1,255 @@
+---
+title: "HW-2"
+author: "vrohatgi"
+format: pdf
+editor: visual
+---
+
+## Q-1 : Four unique implementations of a function in R
+
+### (a-c) Running all methods with varying input \[3,3000\] and testing with same seed value to check for same result 
+
+#### (i) Using `for` loop & (ii) Using vectorized function `sample()`
+
+```{r}
+
+library(dplyr)
+library(ggplot2)
+library(roxygen2)  
+library(tinytex)
+
+## Random test for set.seed() function 
+set.seed(2)
+sample(1:6, 6)
+```
+
+```{r}
+
+## function definition 
+
+dice_amount <- function(num_rolls,reps) {
+  
+  ##  since it will cost $2 to play, define the starting amount 
+  ##  case num_rolls = 0 or some other invalid input is ideally checked at input prompt 
+  ## creating record of multiple iterations of a set of throws (nxm)
+  ## browser()
+  
+  trial_record = list() 
+  
+  for (out_loop in 1:reps){
+  
+    start_amount <- -2 
+    current_amount <- 0
+    won_amount <- 0 
+    
+    for (in_loop in 1:num_rolls){
+      
+      dice_face <- sample(1:6,1,replace = TRUE)
+      
+      if (dice_face == 3) { 
+        current_amount <- current_amount + 6
+        paste("At roll: ",in_loop)
+        paste("current amount: ",sep = "",current_amount)
+      }
+      else if (dice_face == 5){
+        current_amount <- current_amount + 10
+        paste("At roll: ",in_loop)
+        paste("current amount: ",sep = "",current_amount)
+      }
+      else {
+        paste("At roll: ",in_loop)
+        paste("current amount: ",sep = "",current_amount)
+        break
+      }
+      
+      in_loop <- 0 ## reset value of inner loop  
+      
+    }
+    won_amount <- current_amount + start_amount 
+    ## just setting new variable for won amount
+    trial_record[out_loop] <- won_amount
+  }
+  return (trial_record)
+  
+}
+
+
+
+```
+
+```{r}
+## num_rolls <- NA_integer_
+## num_rolls <- as.integer(readline("Enter the number of dice-rolls: "))
+
+(dice_amount(10,10))  
+```
+
+-   OBSERVATION : By default, when you create a numeric vector using the c() function it will produce a vector of double precision numeric values. To create a vector of integers using c() you must specify explicitly by placing an L directly after each number.
+
+### (iii) Using single table to capture all dice throws
+
+```{r}
+
+```
+
+### (iv) Using an "apply" class function
+
+```{r}
+
+## Considering that "apply()" class functions 
+## simply help us avoid using for() loop explicitly 
+
+# Number of experiments
+num_experiments <- 5
+
+# Number of rolls per experiment
+num_rolls <- 10
+
+# Function to simulate rolling a die
+roll_die <- function(n) {
+  sample(1:6, n, replace = TRUE)
+}
+
+# Use apply to simulate the experiments
+results <- t(apply(matrix(1:num_experiments, nrow = num_experiments), 1, function(x) roll_die(num_rolls)))
+
+# Print the results
+print(results)
+
+```
+
+### Evaluating computational complexity using `microbenchmark()`
+
+```{r}
+
+```
+
+### Evaluating fairness using Monte Carlo simulation
+
+```{r}
+
+```
+
+------------------------------------------------------------------------
+
+## Q.2) Linear Regression on "Cars" Data set
+
+```{r}
+
+cars_df <- data.frame(read.csv("cars.csv"))
+```
+
+### (a) Rename the Data 
+
+![](images/clipboard-1666200725.png){width="239"}
+
+Upon examining the csv file, we can determine the precise labels and devise a new, shorter name for each column.
+
+```{r}
+
+colnames(cars_df)
+```
+
+```{r}
+
+column_rename <- c("H","L","W","Eng_Dr_Line","Eng_Type","Eng_Hybrid","Eng_Forward_G","Eng_Trans","City_MPG","Fuel_Type","Highway_MPG","Car_Class","Car_ID","Car_Make","Car_Model_Year","Car_Year","Eng_Horse_Power","Eng_Torque")
+
+
+```
+
+```{r}
+colnames(cars_df) <- column_rename
+```
+
+```{r}
+colnames(cars_df)
+```
+
+```{r}
+
+## cars_df -- Used to check output 
+
+## extracting data for fuel type "gasoline" 
+
+gas_cars <- subset(cars_df,Fuel_Type == "Gasoline")
+
+## gas_cars -- used to check output 
+
+```
+
+```{r}
+
+## Distribution of highway mileage 
+
+hist(gas_cars$Highway_MPG, main = "Highway Mileage of Gasoline Cars", xlab = "Mileage as Miles/Gallons", breaks=80, ylab = "Number of Cars", xlim = c(10,60), ylim = c(0,800))
+```
+
+```{r}
+temp_plot <- plot(density(gas_cars$Highway_MPG))
+polygon(temp_plot)
+```
+
+```{r}
+sd(gas_cars$Highway_MPG)
+mean(gas_cars$Highway_MPG)
+glimpse(gas_cars$Highway_MPG)
+```
+
+| Based on the above plots, highway mileage appears to have a normal distribution. The mean mileage is 24 while the standard deviation is roughly 6. We can attempt to Z-transform the scores to control for the deviation around the mean. 
+
+```{r}
+standardized_vals <- scale(gas_cars$Highway_MPG)
+plot(density(standardized_vals)) 
+```
+
+```{r}
+sd(standardized_vals)
+integer(mean(standardized_vals))
+glimpse(standardized_vals)
+```
+
+It appears that, upon Z-transformation, the standard deviation reduces from 6 to 1 while the mean becomes zero. In order to check whether transformation of Highway Mileage variable is needed, we can later run the computations with both versions of the feature. But for the time being, if we use the standardized values, we might lose some of the detail captured in the relatively large variance in the original values.
+
+```{r}
+gas_cars<- na.omit(gas_cars) ## check to remove any rows with a missing value
+```
+
+Computing some general statistics :
+
+```{r}
+
+gas_cars_num <- gas_cars %>% select(where(is.numeric)) ## create a numeric columns only slice of data; not required/used  
+
+## drop the non-comparable columns 
+
+gas_cars_2 <- data.frame(gas_cars$Eng_Forward_G,gas_cars$City_MPG,gas_cars$Highway_MPG,gas_cars$Eng_Horse_Power,gas_cars$Eng_Torque)
+
+cor(gas_cars_2, method = c("pearson", "kendall", "spearman"))
+
+```
+
+```{r}
+gas_cars_num <- data.matrix(gas_cars_2)
+```
+
+```{r}
+Linear_regress <- lm(Highway_MPG~Eng_Torque+Eng_Horse_Power, data=gas_cars)
+summary(Linear_regress)
+plot(Linear_regress) 
+```
+
+```{r}
+ANOVA_COMP <- aov(Highway_MPG~Eng_Torque * Eng_Horse_Power, data=gas_cars)
+summary(ANOVA_COMP)
+```
+
+To control for other variables in analyzing the relationship between Highway Mileage and Torque, we can start by making make separate data frames
+
+```{r}
+# Basic Interaction Plot 
+interaction.plot(x.factor = gas_cars$Eng_Torque, 
+                 trace.factor = gas_cars$Highway_MPG,  
+                 response = gas_cars$Eng_Horse_Power)
+
+
+```
