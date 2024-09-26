@@ -5,11 +5,11 @@ format: pdf
 editor: visual
 ---
 
-### <https://github.com/Vasu2499/HW-2> – VROHATGI - CODE REPO 
+### <https://github.com/Vasu2499/HW-2> – VROHATGI - CODE REPO
 
 ## Q-1 : Four unique implementations of a function in R
 
-### (a-c) Running all methods with varying input \[3,3000\] and testing with same seed value to check for same result 
+### (a-c) Running all methods with varying input \[3,3000\] and testing with same seed value to check for same result
 
 #### (i) Using `for` loop & (ii) Using vectorized function `sample()`
 
@@ -141,7 +141,7 @@ print(results)
 cars_df <- data.frame(read.csv("cars.csv"))
 ```
 
-### (a) Rename the Data 
+### (a) Rename the Data
 
 ![](images/clipboard-1666200725.png){width="239"}
 
@@ -197,7 +197,7 @@ mean(gas_cars$Highway_MPG)
 glimpse(gas_cars$Highway_MPG)
 ```
 
-| Based on the above plots, highway mileage appears to have a normal distribution. The mean mileage is 24 while the standard deviation is roughly 6. We can attempt to Z-transform the scores to control for the deviation around the mean. 
+| Based on the above plots, highway mileage appears to have a normal distribution. The mean mileage is 24 while the standard deviation is roughly 6. We can attempt to Z-transform the scores to control for the deviation around the mean.
 
 ```{r}
 standardized_vals <- scale(gas_cars$Highway_MPG)
